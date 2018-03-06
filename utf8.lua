@@ -37,7 +37,9 @@ local function utf8_sub(uobj, i, j)
 		i = #uobj+i+1
 	end
 
-	if j and j < 0 then
+	if j == nil then
+		j = #uobj
+	elseif j and j < 0 then
 		j = #uobj+j+1
 	end
 
