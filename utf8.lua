@@ -25,7 +25,7 @@ local string_byte = assert(string.byte)
 local utf8_object
 
 local function utf8_sub(uobj, i, j)
-        assert(i, "bad argument #2 to 'sub' (number expected, got no value)")
+	assert(i, "bad argument #2 to 'sub' (number expected, got no value)")
 	if i then assert(type(i) == "number") end
 	if j then assert(type(j) == "number") end
 
