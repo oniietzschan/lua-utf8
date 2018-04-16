@@ -1,14 +1,14 @@
-local m = {} -- the module
+local m = {
+	_VERSION = 'lua-utf8 0.3.shru',
+	_URL     = 'https://github.com/tst2005/lua-utf8',
+	_LICENSE = 'MIT <http://opensource.org/licenses/MIT>',
+	_AUTHORS = {
+		'TsT <tst2005@gmail.com> 20150916 (v0.3)',
+		'shrucchan <zuck@facebook.com> (v0.3.shru)',
+	},
+}
 
 local ustring = {} -- table to index equivalent string.* functions
-
--- TsT <tst2005@gmail.com> 20150916 (v0.3)
--- License: same to the Lua one
--- TODO: copy the LICENSE file
-
-m._VERSION	= "lua-utf8 0.3"
-m._URL		= "https://github.com/tst2005/lua-utf8"
-m._LICENSE	= 'MIT <http://opensource.org/licenses/MIT>'
 
 -- my custom type for Unicode String
 local utf8type = "ustring"
@@ -41,7 +41,14 @@ local function utf8_sub(uobj, i, j)
 		j = #uobj+j+1
 	end
 
-	local b = i <= 1 and 1 or uobj[i-1]+1
+	local b
+	if i <= 1 then
+		b = 1
+	elseif i <= #uobj then
+		b = uobj[i-1]+1
+	else
+		b = #uobj + 1
+	end
 	local e = (j == 0) and 0 or uobj[j]
 	-- create an new utf8 object from the original one (do not "parse" it again)
 	local rel = uobj[i-1] or 0 -- relative position

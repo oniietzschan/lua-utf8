@@ -14,6 +14,11 @@ describe('When using :sub()', function()
       assert.are.equal('ABCD', U('ABCD'):sub(1):tostring())
     end)
 
+    it('"start" paranmeter is longer than string length.', function()
+      assert.are.equal('', string.sub('ABCD', 6))
+      assert.are.equal('', U('ABCD'):sub(6):tostring())
+    end)
+
     it('"end" parameter is longer than string length.', function()
       assert.are.equal('BCD', string.sub('ABCD', 2, 5))
       assert.are.equal('BCD', U('ABCD'):sub(2, 5):tostring())
