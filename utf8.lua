@@ -17,12 +17,10 @@ local typeof = assert(type)
 local tostring = assert(tostring)
 
 local string = require("string")
-local sgmatch = assert(string.gmatch or string.gfind) -- lua 5.1+ or 5.0
+-- local sgmatch = assert(string.gmatch or string.gfind) -- lua 5.1+ or 5.0
 local string_find = assert(string.find)
 local string_sub = assert(string.sub)
 local string_byte = assert(string.byte)
-
-local table_concat = table.concat
 
 local utf8_object
 
@@ -37,21 +35,21 @@ local function utf8_sub(uobj, i, j)
 		i = #uobj+i+1
 	end
 
-	if j == nil then
+	if j == nil or j > #uobj then
 		j = #uobj
 	elseif j and j < 0 then
 		j = #uobj+j+1
 	end
 
 	local b = i <= 1 and 1 or uobj[i-1]+1
-	local e = j and uobj[j]
+	local e = (j == 0) and 0 or uobj[j]
 	-- create an new utf8 object from the original one (do not "parse" it again)
 	local rel = uobj[i-1] or 0 -- relative position
 	local new = {}
 	for x=i,j,1 do
 		new[#new+1] = uobj[x] -rel
 	end
-	new.rawstring = string_sub(uobj.rawstring, b, assert( type(e)=="number" and e))
+	new.rawstring = string_sub(uobj.rawstring, b, assert(type(e)=="number" and e))
 	new.usestring = uobj.usestring
 	return utf8_object(new)
 end
@@ -112,13 +110,13 @@ local function private_string2ustring(unicode_string)
 	return utf8_object(o)
 end
 
-local function private_contains_unicode(str)
-	return not not str:find("[\128-\193]+")
-end
+-- local function private_contains_unicode(str)
+-- 	return not not str:find("[\128-\193]+")
+-- end
 
 local function utf8_auto_convert(unicode_string, i, j)
 	assert(typeof(unicode_string) == "string", "unicode_string is not a string: ", typeof(unicode_string))
-	local obj, containsutf8 = private_string2ustring(unicode_string)
+	local obj = private_string2ustring(unicode_string)
 	--if private_contains_unicode(unicode_string) then
 	--	obj = private_string2ustring(unicode_string)
 	--else
@@ -189,8 +187,8 @@ end
 
 
 local function utf8_byte(obj, i, j)
-	local i = i or 1
-	local j = j or i -- FIXME: 'or i' or 'or -1' ?
+	i = i or 1
+	j = j or i -- FIXME: 'or i' or 'or -1' ?
 	local uobj
 	assert(utf8_is_object(obj), "ask utf8_byte() for a non utf8 object?!")
 --	if not utf8_is_object(obj) then
@@ -247,11 +245,11 @@ function utf8_object(uobj)
 	mt.__concat	= assert(utf8_op_concat)
 	mt.__tostring	= assert(utf8_tostring)
 	mt.__type	= assert(utf8type)
---	mt.__call	= function(_self, a1)
+--	mt.__call	= function(self, a1)
 --		if a1 == nil then
---			return utf8_clone(_self)
+--			return utf8_clone(self)
 --		end
---		return _self
+--		return self
 --	end
 	return setmetatable(uobj, mt)
 end
@@ -284,7 +282,7 @@ for k,v in pairs(ustring) do m[k] = v end
 
 -- Allow to use the module directly to convert strings
 local mt = {
-	__call = function(_self, obj, i, j)
+	__call = function(_, obj, i, j)
 		if utf8_is_object(obj) then
 			return (i and obj:sub(i,j)) or obj
 		end

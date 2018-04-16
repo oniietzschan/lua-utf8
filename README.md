@@ -1,6 +1,9 @@
 lua-utf8
 ========
 
+[![Build Status](https://travis-ci.org/oniietzschan/lua-utf8.svg?branch=master)](https://travis-ci.org/oniietzschan/lua-utf8)
+[![Codecov](https://codecov.io/gh/oniietzschan/lua-utf8/branch/master/graph/badge.svg)](https://codecov.io/gh/oniietzschan/lua-utf8)
+
 Lua UTF8 support in pure lua script
 
 Current Status
@@ -25,11 +28,10 @@ The module emulate the string capabilities
 
 (*) don't thread Unicode, only ascii upper/lower cases.
 
-
 Sample of use
 =============
 
-```lua 
+```lua
 local u = require("utf8")
 
 local data = "àbcdéêèf"

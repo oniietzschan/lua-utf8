@@ -1,0 +1,29 @@
+language: python
+sudo: false
+
+env:
+  - LUA="lua=5.1"
+  - LUA="lua=5.2"
+  - LUA="lua=5.3"
+  - LUA="luajit=2.0"
+  - LUA="luajit=2.1"
+
+before_install:
+  - pip install hererocks
+  - hererocks lua_install -r^ --$LUA
+  - export PATH=$PATH:$PWD/lua_install/bin
+
+install:
+  - luarocks install luacheck
+  - luarocks install busted
+  - luarocks install luacov
+
+script:
+  # Skip `luacheck utf8.lua` since there are a couple things I don't understand.
+  # - luacheck --std max        utf8.lua
+  - luacheck --std max+busted spec.lua
+  - busted --verbose --coverage spec.lua
+
+after_success:
+  - luacov
+  - bash <(curl -s https://codecov.io/bash)
